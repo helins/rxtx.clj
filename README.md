@@ -9,7 +9,7 @@ Supports a (very) wide variety of platforms.
 
 First, install the native libs for your platform. Nothing to worry about, it is
 fairly easy. For more information about the process or if something goes wrong,
-	   go to [jRxTx](https://github.com/openmuc/jrxtx).
+       go to [jRxTx](https://github.com/openmuc/jrxtx).
 
 On a debian based distribution :
 
@@ -49,27 +49,27 @@ What you can do :
 
 ;; open a serial port
 (def port (serial/open "/dev/ttyUSB0"
-		   			   {:baud-rate 9600
-					    :parity    :none}))
+                       {:baud-rate 9600
+                        :parity    :none}))
 
 
 ;; re-configure the port on the fly
 (serial/configure port
- 				  {:baud-rate 115200})
+                  {:baud-rate 115200})
 
 
 ;; get a nice description of the port
 (serial/describe port)
 
-	
+    
 ;; write something
 (serial/write-bytes port
- 					(.getBytes "Hello world!\n\r"))
+                    (.getBytes "Hello world!\n\r"))
 
 
 ;; read a single byte with a 2000 ms timeout
 (serial/read-byte port
- 				  2000)
+                  2000)
 
 
 ;; check how many more bytes there is to read
@@ -80,7 +80,7 @@ What you can do :
 ;; read 8 bytes as chars
 (take 8
       (map char
-	   	   port))
+           port))
 
 (first port)
 (second port)
@@ -88,10 +88,10 @@ What you can do :
 
 ;; when you need a timeout on your sequence
 (into []
- 	  (comp (take 8)
-	   	    (map char))
-	  (serial/seq-timeout port
-	   					  2000))
+      (comp (take 8)
+            (map char))
+      (serial/seq-timeout port
+                          2000))
 
 
 ;; do not forget to close the port
