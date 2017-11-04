@@ -1,6 +1,8 @@
 (ns clotty.core
 
-  "IO on serial ports by wrapping jrxtx"
+  "IO on serial ports by wrapping jRxTx.
+  
+   Cf. https://github.com/openmuc/jrxtx"
 
   {:author "Adam Helinski"}
 
@@ -18,12 +20,12 @@
 
 
 
-;;;;;;;;;;
+;;;;;;;;;; Private interop fns
 
 
 (defn- -to-data-bits
 
-  "Convert a number to a DataBits enum value"
+  "Converts a number to a DataBits enum value."
 
   ^DataBits
 
@@ -41,7 +43,7 @@
 
 (defn- -from-data-bits
 
-  "Convert a Databits enum value to an number"
+  "Converts a Databits enum value to an number."
 
   ^long
 
@@ -59,7 +61,7 @@
 
 (defn- -to-stop-bits
 
-  "Convert a number to a StopBits enum value"
+  "Converts a number to a StopBits enum value."
 
   ^StopBits
 
@@ -76,7 +78,7 @@
 
 (defn- -from-stop-bits
 
-  "Convert a StopBits enum value to a number"
+  "Converts a StopBits enum value to a number."
 
   [^StopBits stop-bits]
 
@@ -91,7 +93,7 @@
 
 (defn- -to-parity
 
-  "Convert a kw to a Parity enum value"
+  "Converts a kw to a Parity enum value."
 
   ^Parity
 
@@ -110,7 +112,7 @@
 
 (defn- -from-parity
 
-  "Convert a Parity enum value to a kw"
+  "Converts a Parity enum value to a kw."
 
   ^clojure.lang.Keyword
 
@@ -129,7 +131,7 @@
 
 (defn- -to-flow-control
 
-  "Convert a kw to a FlowControl enum value"
+  "Converts a kw to a FlowControl enum value."
 
   ^FlowControl
 
@@ -146,7 +148,7 @@
 
 (defn- -from-flow-control
 
-  "Convert a FlowControl enum value to a kw"
+  "Converts a FlowControl enum value to a kw."
 
   ^clojure.lang.Keyword
 
@@ -161,12 +163,14 @@
 
 
 
-;;;;;;;;;;
+;;;;;;;;;; Private helpers
 
 
 (defmacro ^:private -read
 
-  "Helper for `read-byte` and `read-bytes`."
+  "Helper for `read-byte` and `read-bytes`.
+  
+   Catches timeout exceptions."
 
   [port timeout & body]
 
@@ -187,7 +191,7 @@
 
 (defn- -lz-seq
 
-  "Get a lazy sequence for reading a serial port byte per byte with a timeout"
+  "Gets a lazy sequence for reading a serial port byte per byte with a timeout."
 
   [^SerialPort port ^InputStream is timeout]
 
@@ -207,7 +211,9 @@
 
 (defmacro ^:private -write
 
-  "Helper for `write-byte` and `write-bytes`"
+  "Helper for `write-byte` and `write-bytes`.
+  
+   Catches timeout exceptions."
 
   [port & body]
 
@@ -227,45 +233,66 @@
 
 (defprotocol IWrapper
 
-  "Wrap a SerialPort object"
+  "Commands a serial port."
 
   (raw [this]
 
-    "Get the raw SerialPort object")
+    "Gets the raw org.openmuc.jrxtx.SerialPort object.")
 
 
   (describe [this]
 
-    "Describe the serial port as a map")
+    "Describes the serial port as a map.")
 
 
   (configure [this config]
 
-    "Re-configure the serial port (eg. change baud-rate) on the fly.
+    "Re-configures the serial port (eg. change baud-rate) on the fly.
 
-     Throws an IOException if something goes wrong.
+    
+     Throws
+    
+       java.io.IOException
+         If something goes wrong.
+
 
      Cf. `open`")
 
 
   (available-bytes [this]
 
-    "Get the number of bytes that can be read from the buffer before blocking.
+    "Gets the number of bytes that can be read from the buffer before blocking.
 
-     Throws an IOException if something goes wrong")
+     Throws
+    
+       java.io.IOException
+         If something goes wrong.")
 
 
   (read-byte [this]
              [this timeout]
 
-    "Read a single byte.
+    "Reads a single byte.
     
      A timeout in milliseconds can be provided, 0 meaning forever.
     
-     Returns nil if the timeout is elapsed
-             -1  if the port is closed
 
-     Throws an IOException if something goes wrong.")
+     Returns
+    
+       nil
+         If the timeout is elapsed.
+
+       -1
+         If the port is closed.
+
+       byte
+         Otherwise.
+
+
+     Throws
+     
+       java.io.IOException
+         If something goes wrong.")
 
 
   (read-bytes [this]
@@ -274,66 +301,104 @@
               [this ba offset n]
               [this ba offset n timeout]
 
-  "Read several bytes from the given serial port and write them a byte array.
+  "Reads several bytes from the given serial port and writes them a byte array.
   
    A timeout in milliseconds can be provided, 0 meaning forever.
   
-   The offset for the byte array and the number of bytes to read are optionals as well.
 
-   If nothing else than the port is provided, reads the number of availables bytes in the
-   buffer into a newly created byte array.
+   Returns
   
-   Returns nil          if the timeout is elapsed
-           -1           if the port is closed
-           a byte array if only the port is provided
+     nil
+       If the timeout is elapsed.
+
+     -1
+       If the port is closed.
+
+     number of read bytes
+       If a byte array is provided.
+
+     byte array with the number of available bytes
+       If no byte array is provided.
   
-   Throws an IOException if something goes wrong.
+
+   Throws
+
+     java.io.IOException
+       If something goes wrong.
   
+
    Cf. `available-bytes`")
 
 
   (skip [this n]
         [this n timeout]
 
-    "Skip over and discards `n` bytes of data. Just as reads, this function will
-     block if `n` is greater than the number of bytes in the buffer.
+    "Skips over and discards `n` bytes of data. Just as reads, this function will
+     block if `n` is greater than the number of bytes available in the buffer.
 
      A timeout in milliseconds can be provided, 0 meaning forever.
-    
-     Returns the actual number of bytes skipped.
-             nil if the timeout is elapsed
 
-     Throws an IOException if something goes wrong.")
+    
+     Returns
+
+       nil
+         If the timeout is elapsed.
+
+       actual number of bytes skipped
+         Otherwise.
+
+
+     Throws
+    
+       java.io.IOException
+         If something goes wrong.")
 
 
   (seq-timeout [this timeout]
 
-    "Convert to a sequence for reading byte per byte with a timeout, 0 meaning forever.
+    "Converts to a sequence for reading byte per byte with a timeout, 0 meaning forever.
 
      Cf. `read-byte`")
 
 
   (write-byte [this b]
 
-    "Write a single byte to the given port.
+    "Writes a single byte to the given port.
 
-     Returns true  if the write is successfull
-             false if the port is closed
+     Returns
+    
+       true
+         If the write is succesful.
+     
+       false
+         If the port is closed.
 
-     Throws an IOException if something goes wrong.")
+
+     Throws
+     
+      java.io.IOException
+        If something goes wrong.")
 
 
   (write-bytes [this ba]
                [this ba offset n]
 
-    "Write a byte array to the given port.
+    "Writes a byte array to the given port.
     
-     An offset and a number of bytes can be provided.
 
-     Returns true  if the write is successfull
-             false if the port is closed
+     Returns
+    
+       true
+         If the write is succesful.
+     
+       false
+         If the port is closed.
 
-     Throws an IOException if something goes wrong.")
+
+     Throws
+     
+      java.io.IOException
+        If something goes wrong.")
 
 
   (closed? [this]
@@ -343,9 +408,12 @@
 
   (close [this]
 
-    "Close the serial port.
+    "Closes the serial port.
     
-     Throws an IOException if something goes wrong."))
+     Throws
+    
+       java.io.IOException
+         If something goes wrong."))
 
 
 
@@ -512,7 +580,7 @@
 
 (defn available-ports
 
-  "Get a set of available serial ports.
+  "Gets a set of available serial ports.
 
    Prints an error if a port is already locked but does not throw."
 
@@ -527,9 +595,9 @@
 
 (defn open
 
-  "Given a path, open it at a serial port.
+  "Opens a serial port.
 
-   The configuration map may contains
+   The configuration map may contain
 
       :baud-rate
           Preferably a standard baud rate
@@ -557,11 +625,20 @@
             :rts-cts   ;; Hardware flow-control
             :xon-xoff  ;; Software flow-control
             }
+
+
+   Ex. (open \"/dev/ttyUSB0\"
+             {:baud-rate 2400
+              :parity    :none})
    
 
    Throws
-      com.openmuc.jrxtx.PortNotFoundException if port is busy or doesn't exist
-      IOException                             otherwise"
+
+     java.io.IOException
+       If something goes wrong.
+
+     com.openmuc.jrxtx.PortNotFoundException
+       If the port is busy or does not exist."
 
   ^Wrapper
 

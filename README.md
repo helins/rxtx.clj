@@ -1,15 +1,17 @@
 # Clotty
 
 Thin clojure wrapper around [jRxTx](https://github.com/openmuc/jrxtx) for doing
-IO on serial ports.
+IO on serial ports, it acts as a drop-in replacement for legacy
+[RXTX](http://rxtx.qbang.org/wiki/index.php/Main_Page).
 
 Supports a (very) wide variety of platforms.
 
-## Usage
+## Installation
 
-First, install the native libs for your platform. Nothing to worry about, it is
-fairly easy. For more information about the process or if something goes wrong,
-       go to [jRxTx](https://github.com/openmuc/jrxtx).
+There is a bit of a setup but nothing to worry about, it is fairly
+easy.
+
+For more information about the process or if something goes wrong, go to [jRxTx](https://github.com/openmuc/jrxtx).
 
 On a debian based distribution :
 
@@ -19,7 +21,7 @@ sudo apt install librxtx-java
 
 When starting your application/repl, check if the "java.library.path" property
 contains a path to the installed native libs. On debian, that should be
-/usr/lib/jni :
+'/usr/lib/jni' :
 
 ```clj
 (System/getProperty "java.library.path")
@@ -37,7 +39,14 @@ When executing your uberjar :
 java -Djava.library.path=/PATH/TO/LIBS -jar your_program.jar
 ```
 
-What you can do :
+Then, simply add the following dependency to your project :
+
+    [dvlopt/clotty "0.0.0-alpha1"]
+
+
+## Usage
+
+Read the full [API](https://dvlopt.github.io/doc/clotty/index.html).
 
 ```clj
 (require '[clotty.core :as serial])
@@ -72,7 +81,7 @@ What you can do :
                   2000)
 
 
-;; check how many more bytes there is to read
+;; check how many more bytes there are to read
 (serial/available-bytes port)
 
 
@@ -97,8 +106,6 @@ What you can do :
 ;; do not forget to close the port
 (serial/close port)
 ```
-
-Read the full [API](https://dvlopt.github.io/doc/clotty).
 
 
 ## License
