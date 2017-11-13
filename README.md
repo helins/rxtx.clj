@@ -8,10 +8,10 @@ Supports a (very) wide variety of platforms.
 
 ## Installation
 
-There is a bit of a setup but nothing to worry about, it is fairly
-easy.
+There is a bit of a setup but nothing to worry about, it is fairly easy.
 
-For more information about the process or if something goes wrong, go to [jRxTx](https://github.com/openmuc/jrxtx).
+For more information about the process or if something goes wrong, go to
+[jRxTx](https://github.com/openmuc/jrxtx).
 
 On a debian based distribution :
 
@@ -41,8 +41,8 @@ java -Djava.library.path=/PATH/TO/LIBS -jar your_program.jar
 
 Then, simply add the following dependency to your project :
 
-    [dvlopt/clotty "0.0.0-alpha1"]
-
+[![Clojars
+Project](https://img.shields.io/clojars/v/dvlopt/clotty.svg)](https://clojars.org/dvlopt/clotty)
 
 ## Usage
 
