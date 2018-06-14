@@ -1,8 +1,11 @@
-# Clotty
+# dvlopt.rxtx
 
-Thin clojure wrapper around [jRxTx](https://github.com/openmuc/jrxtx) for doing
-IO on serial ports, it acts as a drop-in replacement for legacy
-[RXTX](http://rxtx.qbang.org/wiki/index.php/Main_Page).
+[![Clojars
+Project](https://img.shields.io/clojars/v/dvlopt/rxtx.svg)](https://clojars.org/dvlopt/rxtx)
+
+Simple API for doing serial IO.
+
+Based on [jRxTx](https://github.com/openmuc/jrxtx).
 
 Supports a (very) wide variety of platforms.
 
@@ -13,14 +16,14 @@ There is a bit of a setup but nothing to worry about, it is fairly easy.
 For more information about the process or if something goes wrong, go to
 [jRxTx](https://github.com/openmuc/jrxtx).
 
-On a debian based distribution :
+For instance, on a debian based distribution :
 
 ```
 sudo apt install librxtx-java
 ```
 
-When starting your application/repl, check if the "java.library.path" property
-contains a path to the installed native libs. On debian, that should be
+When starting your application or a repl, check if the "java.library.path"
+property contains a path to the installed native libs. On debian, that should be
 '/usr/lib/jni' :
 
 ```clj
@@ -39,72 +42,37 @@ When executing your uberjar :
 java -Djava.library.path=/PATH/TO/LIBS -jar your_program.jar
 ```
 
-Then, simply add the following dependency to your project :
-
-[![Clojars
-Project](https://img.shields.io/clojars/v/dvlopt/clotty.svg)](https://clojars.org/dvlopt/clotty)
-
 ## Usage
 
-Read the full [API](https://dvlopt.github.io/doc/clotty/index.html).
+Read the [API](https://dvlopt.github.io/doc/clojure/dvlopt/rxtx/dvlopt.rxtx.html).
+
+In short, without error handling :
 
 ```clj
-(require '[clotty.core :as serial])
+(require '[dvlopt.rxtx :as rxtx])
 
 
-;; get a set of available ports on your machine
-(serial/available-ports)
+(with-open [^java.lang.AutoCloseable port (rxtx/serial-port "/dev/ttyUSB0"
+                                                            {::rxtx/baud-rate 9600
+                                                             ::rxtx/parity    :even})]
 
+  ;; Different things can be written to a serial port.
+  (rxtx/write port
+              "Hello ")
+  (rxtx/write port
+              \w)
+  (rxtx/write port
+              111)
+  (rxtx/write port
+              [114 108 100])
 
-;; open a serial port
-(def port (serial/open "/dev/ttyUSB0"
-                       {:baud-rate 9600
-                        :parity    :none}))
-
-
-;; re-configure the port on the fly
-(serial/configure port
-                  {:baud-rate 115200})
-
-
-;; get a nice description of the port
-(serial/describe port)
-
-    
-;; write something
-(serial/write-bytes port
-                    (.getBytes "Hello world!\n\r"))
-
-
-;; read a single byte with a 2000 ms timeout
-(serial/read-byte port
-                  2000)
-
-
-;; check how many more bytes there are to read
-(serial/available-bytes port)
-
-
-;; serial ports are sequable into a byte stream
-;; read 8 bytes as chars
-(take 8
-      (map char
-           port))
-
-(first port)
-(second port)
-
-
-;; when you need a timeout on your sequence
-(into []
-      (comp (take 8)
-            (map char))
-      (serial/seq-timeout port
-                          2000))
-
-
-;; do not forget to close the port
-(serial/close port)
+  ;; Reads the answer, up to 16 unsigned bytes, but with a timeout of 2000 milliseconds.
+  (println :answer
+           (String. (byte-array (rxtx/read port
+                                           16
+                                           2000))))
+                                        
+  )
 ```
 
 
