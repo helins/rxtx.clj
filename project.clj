@@ -1,5 +1,5 @@
 (defproject dvlopt/rxtx
-            "1.0.0"
+            "1.0.1"
 
   :description  "https://github.com/dvlopt/rxtx"
   :url          "Serial IO based on RXTX"
