@@ -237,15 +237,17 @@
 
    Cf. `defaults` for defaut values relative to these options."
 
-  ^SerialPort
-
-  ([path]
+  (^AutoCloseable
+    
+   [path]
 
    (serial-port path
                 nil))
 
 
-  ([path port-options]
+  (^AutoCloseable
+    
+   [path port-options]
 
    (.build (doto (SerialPortBuilder/newBuilder path)
              (.setBaudRate (void/obtain ::baud-rate

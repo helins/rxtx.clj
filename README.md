@@ -52,11 +52,12 @@ In short, without error handling :
 (require '[dvlopt.rxtx :as rxtx])
 
 
-(with-open [^java.lang.AutoCloseable port (rxtx/serial-port "/dev/ttyUSB0"
-                                                            {::rxtx/baud-rate 9600
-                                                             ::rxtx/parity    :even})]
+(with-open [port (rxtx/serial-port "/dev/ttyUSB0"
+                                   {::rxtx/baud-rate 9600
+                                    ::rxtx/parity    :even})]
 
-  ;; Different things can be written to a serial port.
+  ;; Different things can be written to a serial port besides a byte array.
+  ;;
   (rxtx/write port
               "Hello ")
   (rxtx/write port
