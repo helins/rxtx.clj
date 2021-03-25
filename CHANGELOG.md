@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 - Name pluralization scheme
     - available-bytes -> available-byte+
+    - available-ports -> available-port+
     - defaults        -> default+
 - Namespace parameters under "rxtx"
 - Relicensed under MPL 2.0

@@ -186,7 +186,7 @@
 ;;;;;;;;;; Opening and closing a serial port
 
 
-(defn available-ports
+(defn available-port+
 
   "Gets a set of available serial ports.
 
@@ -214,41 +214,49 @@
 
   "Opens a serial port at the given path.
 
-   The configuration map may contain :
+   The configuration map may contain:
 
-      :rxtx/baud-rate
-        Preferably a standard baud rate.
+   | Key | Description |
+   |---|---|
+   | :rxtx/baud-rate | Preferably a standard baud rate |
+   | :rxtx/data-bits | How many bits per data char one of #{5 6 7 8} |
+   | :rxtx/flow-control | Handshaking for preventing the sender from sending too much too fast, see below |
+   | :rxtx/parity | Error detection, see below |
+   | :rxtx/stop-bits | Bits sent at the end of each data char, see below |
 
-      :rxtx/data-bits
-        How many bits per data char one of #{5 6 7 8}.
+   Flow control is one of:
 
-      :rxtx/flow-control
-        Handshaking for preventing the sender from sending too much too fast, one of
+   | Keyword | Description |
+   |---|---|
+   | :none | No handshaking |
+   | :rts-cts | Hardware flow-control |
+   | :xon-xoff | Software flow-control |
 
-          :none      ;; No handshaking
-          :rts-cts   ;; Hardware flow-control
-          :xon-xoff  ;; Software flow-control
+   Parity is one of:
+
+   | Keyword | Description |
+   |---|---|
+   | :even | An even parity bit will be sent for each data char |
+   | :mark | Mark parity bit |
+   | :none | No parity bit |
+   | :odd | Odd parity will be sent for each data char |
+   | :space |Space parity |
+
+   Stop-bits is one of:
+
+   - :stop-bits-1
+   - :stop-bits-1.5
+   - :stop-bits-2
+
+   See [[default+]] for default values relative to these options.
 
 
-      :rxtx/parity
-        Error detection, one of :
+   ```clojure
+   (serial-port \"/dev/ttyUSB0\"
+                {:rxtx/baud-rate 2400
+                 :rxtx/parity    :none})
+   ```"
 
-          :even   ;; An even parity bit will be sent for each data char
-          :mark   ;; Mark parity bit
-          :none   ;; No parity bit
-          :odd    ;; Odd parity will be sent for each data char
-          :space  ;; Space parity
-
-      :rxtx/stop-bits
-        Bits sent at the end of each data char, one of #{:1 :1.5 :2}.
-
-
-   Ex. (serial-port \"/dev/ttyUSB0\"
-                    {:rxtx/baud-rate 2400
-                     :rxtx/parity    :none})
-   
-
-   Cf. `default+` for defaut values relative to these options."
 
   (^AutoCloseable
     
@@ -283,7 +291,7 @@
   "Describes the current status of the given serial port by providing a map containing
    the same keys as the option for opening a serial port as well as a :rxtx/name and :rxtx/closed?.
 
-   Cf. `serial-port`"
+   See [[serial-port]]."
 
   [^SerialPort port]
 
@@ -300,7 +308,7 @@
 
 (defn input-stream
 
-  "Given an open serial port, retrieves the associated java.io.InputStream.
+  "Given an open serial port, retrieves the associated `java.io.InputStream`.
   
    Should not be needed unless really needed."
 
@@ -315,7 +323,7 @@
 
 (defn output-stream
 
-  "Given an open serial port, retrieves the associated java.io.OutputStream.
+  "Given an open serial port, retrieves the associated `java.io.OutputStream`.
 
    Should not be needed unless really needed."
 
@@ -334,7 +342,7 @@
 
    Missing options will not resolve to default values.
 
-   Cf. `serial-port`"
+   See [[serial-port]]."
 
   [^SerialPort port port-options]
 
@@ -460,15 +468,15 @@
 
 (defn write
 
-  "Writes to the serial port anything satisfying the IWritable protocol.
+  "Writes to the serial port anything satisfying the [[IWritable]] protocol.
   
-   Are already available :
+   Are already available:
 
-     Byte arrays
-     Characters
-     Sequences of any sort (seqables)
-     Number converted to a single unsigned byte
-     Strings"
+   - Byte arrays
+   - Characters
+   - Sequences of any sort (seqables)
+   - Number converted to a single unsigned byte
+   - Strings"
 
   [^SerialPort port writable]
 
