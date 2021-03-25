@@ -1,13 +1,16 @@
-# dvlopt.rxtx
+# RXTX, using the serial port from Clojure JVM
 
 [![Clojars
-Project](https://img.shields.io/clojars/v/dvlopt/rxtx.svg)](https://clojars.org/dvlopt/rxtx)
+Project](https://img.shields.io/clojars/v/io/helins/rxtx.svg)](https://clojars.org/io.helins/rxtx)
+
+[![Cljdoc](https://cljdoc.org/badge/io.helins/rxtx)](https://cljdoc.org/d/io.helins/rxtx)
 
 Simple API for doing serial IO.
 
 Based on [jRxTx](https://github.com/openmuc/jrxtx).
 
 Supports a (very) wide variety of platforms.
+
 
 ## Installation
 
@@ -42,19 +45,22 @@ When executing your uberjar :
 java -Djava.library.path=/PATH/TO/LIBS -jar your_program.jar
 ```
 
+
 ## Usage
 
-Read the [API](https://dvlopt.github.io/doc/clojure/dvlopt/rxtx/dvlopt.rxtx.html).
+This is a very brief overview.
+
+The [full API is available on Cljdoc](https://cljdoc.org/d/io.helins/rxtx).
 
 In short, without error handling :
 
 ```clj
-(require '[dvlopt.rxtx :as rxtx])
+(require '[helins.rxtx :as rxtx])
 
 
 (with-open [port (rxtx/serial-port "/dev/ttyUSB0"
-                                   {::rxtx/baud-rate 9600
-                                    ::rxtx/parity    :even})]
+                                   {:rxtx/baud-rate 9600
+                                    :rxtx/parity    :even})]
 
   ;; Different things can be written to a serial port besides a byte array.
   ;;
@@ -71,9 +77,7 @@ In short, without error handling :
   (println :answer
            (String. (byte-array (rxtx/read port
                                            16
-                                           2000))))
-                                        
-  )
+                                           2000)))))
 ```
 
 
