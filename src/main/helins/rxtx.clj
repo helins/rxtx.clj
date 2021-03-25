@@ -1,4 +1,9 @@
-(ns dvlopt.rxtx
+;; This Source Code Form is subject to the terms of the Mozilla Public
+;; License, v. 2.0. If a copy of the MPL was not distributed with this
+;; file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+
+(ns helins.rxtx
 
   "IO on serial ports based on jRXTX.
    
@@ -6,9 +11,6 @@
 
   {:author "Adam Helinski"}
 
-  (:refer-clojure :exclude [flush
-                            read])
-  (:require [dvlopt.void :as void])
   (:import (org.openmuc.jrxtx DataBits
                               FlowControl
                               Parity
@@ -19,9 +21,9 @@
                               StopBits)
            (java.io InputStream
                     OutputStream)
-           java.lang.AutoCloseable))
-
-
+           java.lang.AutoCloseable)
+  (:refer-clojure :exclude [flush
+                            read]))
 
 
 ;;;;;;;;;; Default values
@@ -38,6 +40,17 @@
    ::stop-bits    :1})
 
 
+
+(defn- -obtain
+
+  ;; Retrieves a value or relies on default one.
+
+  [k hmap]
+
+  (or (get hmap
+           k)
+      (get defaults
+           k)))
 
 
 ;;;;;;;;;; Conversions
@@ -250,21 +263,16 @@
    [path port-options]
 
    (.build (doto (SerialPortBuilder/newBuilder path)
-             (.setBaudRate (void/obtain ::baud-rate
-                                        port-options
-                                        defaults))
-             (.setDataBits (-number->data-bits (void/obtain ::data-bits
-                                                            port-options
-                                                            defaults)))
-             (.setStopBits (-kw->stop-bits (void/obtain ::stop-bits
-                                                        port-options
-                                                        defaults)))
-             (.setParity (-kw->parity (void/obtain ::parity
-                                                   port-options
-                                                   defaults)))
-             (.setFlowControl (-kw->flow-control (void/obtain ::flow-control
-                                                              port-options
-                                                              defaults)))))))
+             (.setBaudRate (-obtain ::baud-rate
+                                    port-options))
+             (.setDataBits (-number->data-bits (-obtain ::data-bits
+                                                        port-options)))
+             (.setStopBits (-kw->stop-bits (-obtain ::stop-bits
+                                                    port-options)))
+             (.setParity (-kw->parity (-obtain ::parity
+                                               port-options)))
+             (.setFlowControl (-kw->flow-control (-obtain ::flow-control
+                                                          port-options)))))))
 
 
 

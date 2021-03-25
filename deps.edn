@@ -1,0 +1,30 @@
+{:aliases
+ {:deploy
+  {:exec-args  {:artifact  "release.jar"
+                :installer :remote}
+   :exec-fn    deps-deploy.deps-deploy/deploy
+   :extra-deps {slipset/deps-deploy {:mvn/version "0.1.5"}}}
+
+  :dev
+  {:extra-deps  {org.clojure/test.check {:mvn/version "1.1.0"}}
+   :extra-paths ["src/dev"]}
+
+  :jar
+  {:exec-args    {:jar      "release.jar"
+                  :sync-pom true}
+   :exec-fn      hf.depstar/jar
+   :replace-deps {seancorfield/depstar {:mvn/version "2.0.171"}}}
+
+  :install
+  {:exec-args  {:artifact  "release.jar"
+                :installer :local}
+   :exec-fn    deps-deploy.deps-deploy/deploy
+   :extra-deps {slipset/deps-deploy {:mvn/version "0.1.5"}}}}
+
+
+ :deps
+ {org.openmuc/jrxtx {:mvn/version "1.0.1"}}
+
+
+ :paths
+ ["src/main"]}
