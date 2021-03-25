@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.helins</groupId>
   <artifactId>rxtx</artifactId>
-  <version>1.0.1</version>
+  <version>2.0.0</version>
   <name>RXTX</name>
   <description>Serial IO based on RXTX from Clojure JVM</description>
   <url>https://github.com/helins/rxtx.clj</url>

@@ -10,6 +10,14 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+### Fixed
+
+
+
+## [2.0.0] - 2021-03-25
+
+### Changed
+
 - Name pluralization scheme
     - available-bytes -> available-byte+
     - available-ports -> available-port+
@@ -56,7 +64,8 @@ All notable changes to this project will be documented in this file.
 
 
 
-[Unreleased]: https://github.com/helins/rxtx.clj/compare/1.0.1...HEAD
+[Unreleased]: https://github.com/helins/rxtx.clj/compare/2.0.0...HEAD
+[2.0.0]: https://github.com/helins/rxtx.clj/compare/1.0.1...2.0.0
 [1.0.1]: https://github.com/helins/rxtx.clj/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/helins/rxtx.clj/compare/0.0.0-alpha1...1.0.0
 [0.0.0-alpha1]: https://github.com/helins/rxtx.clj/compare/0.0.0-alpha0...0.0.0-alpha1

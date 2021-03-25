@@ -1,7 +1,7 @@
 # RXTX, using the serial port from Clojure JVM
 
 [![Clojars
-Project](https://img.shields.io/clojars/v/io/helins/rxtx.svg)](https://clojars.org/io.helins/rxtx)
+Project](https://img.shields.io/clojars/v/io.helins/rxtx.svg)](https://clojars.org/io.helins/rxtx)
 
 [![Cljdoc](https://cljdoc.org/badge/io.helins/rxtx)](https://cljdoc.org/d/io.helins/rxtx)
 
