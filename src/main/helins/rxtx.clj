@@ -29,12 +29,12 @@
 ;;;;;;;;;; Default values
 
 
-(def defaults
+(def default+
 
   "Defaut values for keys and options used throughout this namespace."
 
   {:rxtx/baud-rate    9600
-   :rxtx/data-bits    8
+   :rxtx/data-bit+    8
    :rxtx/flow-control :none
    :rxtx/parity       :even
    :rxtx/stop-bits    :1})
@@ -49,7 +49,7 @@
 
   (or (get hmap
            k)
-      (get defaults
+      (get default+
            k)))
 
 
@@ -247,7 +247,7 @@
                      :rxtx/parity    :none})
    
 
-   Cf. `defaults` for defaut values relative to these options."
+   Cf. `default+` for defaut values relative to these options."
 
   (^AutoCloseable
     
@@ -340,7 +340,7 @@
 ;;;;;;;;;; Doing IO
 
 
-(defn available-bytes
+(defn available-byte+
 
   "Estimates how many bytes are available for reading right now."
 
