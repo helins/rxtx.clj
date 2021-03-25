@@ -33,11 +33,11 @@
 
   "Defaut values for keys and options used throughout this namespace."
 
-  {::baud-rate    9600
-   ::data-bits    8
-   ::flow-control :none
-   ::parity       :even
-   ::stop-bits    :1})
+  {:rxtx/baud-rate    9600
+   :rxtx/data-bits    8
+   :rxtx/flow-control :none
+   :rxtx/parity       :even
+   :rxtx/stop-bits    :1})
 
 
 
@@ -120,7 +120,6 @@
     StopBits/STOPBITS_1   :1
     StopBits/STOPBITS_1_5 :1.5
     StopBits/STOPBITS_2   :2))
-
 
 
 
@@ -216,13 +215,13 @@
 
    The configuration map may contain :
 
-      ::baud-rate
+      :rxtx/baud-rate
         Preferably a standard baud rate.
 
-      ::data-bits
+      :rxtx/data-bits
         How many bits per data char one of #{5 6 7 8}.
 
-      ::flow-control
+      :rxtx/flow-control
         Handshaking for preventing the sender from sending too much too fast, one of
 
           :none      ;; No handshaking
@@ -230,7 +229,7 @@
           :xon-xoff  ;; Software flow-control
 
 
-      ::parity
+      :rxtx/parity
         Error detection, one of :
 
           :even   ;; An even parity bit will be sent for each data char
@@ -239,13 +238,13 @@
           :odd    ;; Odd parity will be sent for each data char
           :space  ;; Space parity
 
-      ::stop-bits
+      :rxtx/stop-bits
         Bits sent at the end of each data char, one of #{:1 :1.5 :2}.
 
 
    Ex. (serial-port \"/dev/ttyUSB0\"
-                    {::baud-rate 2400
-                     ::parity    :none})
+                    {:rxtx/baud-rate 2400
+                     :rxtx/parity    :none})
    
 
    Cf. `defaults` for defaut values relative to these options."
@@ -263,15 +262,15 @@
    [path port-options]
 
    (.build (doto (SerialPortBuilder/newBuilder path)
-             (.setBaudRate (-obtain ::baud-rate
+             (.setBaudRate (-obtain :rxtx/baud-rate
                                     port-options))
-             (.setDataBits (-number->data-bits (-obtain ::data-bits
+             (.setDataBits (-number->data-bits (-obtain :rxtx/data-bits
                                                         port-options)))
-             (.setStopBits (-kw->stop-bits (-obtain ::stop-bits
+             (.setStopBits (-kw->stop-bits (-obtain :rxtx/stop-bits
                                                     port-options)))
-             (.setParity (-kw->parity (-obtain ::parity
+             (.setParity (-kw->parity (-obtain :rxtx/parity
                                                port-options)))
-             (.setFlowControl (-kw->flow-control (-obtain ::flow-control
+             (.setFlowControl (-kw->flow-control (-obtain :rxtx/flow-control
                                                           port-options)))))))
 
 
@@ -291,19 +290,19 @@
 (defn describe 
 
   "Describes the current status of the given serial port by providing a map containing
-   the same keys as the option for opening a serial port as well as a ::name and ::closed?.
+   the same keys as the option for opening a serial port as well as a :rxtx/name and :rxtx/closed?.
 
    Cf. `serial-port`"
 
   [^SerialPort port]
 
-  {::baud-rate    (.getBaudRate port)
-   ::closed?      (.isClosed port)
-   ::data-bits    (-data-bits->number (.getDataBits port))
-   ::flow-control (-flow-control->kw (.getFlowControl port))
-   ::name         (.getPortName port)
-   ::parity       (-parity->kw (.getParity port))
-   ::stop-bits    (-stop-bits->kw (.getStopBits port))})
+  {:rxtx/baud-rate    (.getBaudRate port)
+   :rxtx/closed?      (.isClosed port)
+   :rxtx/data-bits    (-data-bits->number (.getDataBits port))
+   :rxtx/flow-control (-flow-control->kw (.getFlowControl port))
+   :rxtx/name         (.getPortName port)
+   :rxtx/parity       (-parity->kw (.getParity port))
+   :rxtx/stop-bits    (-stop-bits->kw (.getStopBits port))})
 
 
 
@@ -377,16 +376,16 @@
   (doseq [[option
            value]  port-options]
     (case option
-      ::baud-rate    (.setBaudRate    port
-                                      value)
-      ::data-bits    (.setDataBits    port
-                                      (-number->data-bits value))
-      ::flow-control (.setFlowControl port
-                                     (-kw->flow-control value))
-      ::parity       (.setParity      port
-                                      (-kw->parity value))
-      ::stop-bits    (.setStopBits    port
-                                      (-kw->stop-bits value))))
+      :rxtx/baud-rate    (.setBaudRate    port
+                                          value)
+      :rxtx/data-bits    (.setDataBits    port
+                                          (-number->data-bits value))
+      :rxtx/flow-control (.setFlowControl port
+                                          (-kw->flow-control value))
+      :rxtx/parity       (.setParity      port
+                                          (-kw->parity value))
+      :rxtx/stop-bits    (.setStopBits    port
+                                          (-kw->stop-bits value))))
   nil)
 
 
