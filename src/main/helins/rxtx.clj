@@ -73,7 +73,6 @@
 
 
 
-
 (defn- -data-bits->number
 
   ;; Converts a Databits enum value to an number.
@@ -91,7 +90,6 @@
 
 
 
-
 (defn- -kw->stop-bits
 
   ;; Converts a number to a StopBits enum value.
@@ -102,10 +100,9 @@
 
   (condp identical?
          stop-bits
-    :1   StopBits/STOPBITS_1
-    :1.5 StopBits/STOPBITS_1_5
-    :2   StopBits/STOPBITS_2))
-
+    :stop-bits-1   StopBits/STOPBITS_1
+    :stop-bits-1.5 StopBits/STOPBITS_1_5
+    :stop-bits-2   StopBits/STOPBITS_2))
 
 
 
@@ -117,9 +114,9 @@
 
   (condp identical?
          stop-bits
-    StopBits/STOPBITS_1   :1
-    StopBits/STOPBITS_1_5 :1.5
-    StopBits/STOPBITS_2   :2))
+    StopBits/STOPBITS_1   :stop-bits-1
+    StopBits/STOPBITS_1_5 :stop-bits-1.5
+    StopBits/STOPBITS_2   :stop-bits-2))
 
 
 
@@ -141,7 +138,6 @@
 
 
 
-
 (defn- -parity->kw
 
   ;; Converts a Parity enum value to a kw.
@@ -155,7 +151,6 @@
     Parity/NONE  :none
     Parity/ODD   :odd
     Parity/SPACE :space))
-
 
 
 
@@ -175,7 +170,6 @@
 
 
 
-
 (defn- -flow-control->kw
 
   "Converts a FlowControl enum value to a kw."
@@ -189,9 +183,7 @@
     FlowControl/XON_XOFF :xon-xoff))
 
 
-
-
-;;;;;;;;;;
+;;;;;;;;;; Opening and closing a serial port
 
 
 (defn available-ports
@@ -206,6 +198,15 @@
         (map str)
         (SerialPortBuilder/getSerialPortNames)))
 
+
+
+(defn close
+
+  "Closes a serial port."
+
+  [^AutoCloseable port]
+
+  (.close port))
 
 
 
@@ -274,17 +275,7 @@
                                                           port-options)))))))
 
 
-
-
-(defn close
-
-  "Closes a serial port."
-
-  [^AutoCloseable port]
-
-  (.close port))
-
-
+;;;;;;;;;; Describing a serial port, reconfiguration, and getting streams
 
 
 (defn describe 
@@ -336,32 +327,6 @@
 
 
 
-
-;;;;;;;;;; Doing IO
-
-
-(defn available-byte+
-
-  "Estimates how many bytes are available for reading right now."
-
-  [^SerialPort port]
-
-  (.available (input-stream port)))
-
-
-
-
-(defn flush
-
-  "Ensures written bytes are properly flushed."
-
-  [^SerialPort port]
-
-  (.flush (output-stream port)))
-
-
-
-
 (defn reconfigure
 
   "Reconfigures the given serial port on the fly by providing a map containing the same options as for
@@ -388,6 +353,27 @@
                                           (-kw->stop-bits value))))
   nil)
 
+
+;;;;;;;;;; Reading an input stream
+
+
+(defn available-byte+
+
+  "Estimates how many bytes are available for reading right now."
+
+  [^SerialPort port]
+
+  (.available (input-stream port)))
+
+
+
+(defn flush
+
+  "Ensures written bytes are properly flushed."
+
+  [^SerialPort port]
+
+  (.flush (output-stream port)))
 
 
 
@@ -424,6 +410,8 @@
         '()))))
 
 
+;;;;;;;;;; Writing to an output stream
+
 
 
 (defprotocol IWritable
@@ -433,7 +421,6 @@
   (to-byte-array [this]
 
     "Converts the given argument to a byte array."))
-
 
 
 
@@ -468,7 +455,6 @@
 
     (to-byte-array [this]
       (.getBytes this)))
-
 
 
 

@@ -19,6 +19,8 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- Keywords for stop-bits which do not begin with a number (illegal)
+
 
 
 ## [1.0.1] - 2020-01-18
